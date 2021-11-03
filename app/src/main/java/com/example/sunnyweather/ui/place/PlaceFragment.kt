@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sunnyweather.MainActivity
 import com.example.sunnyweather.R
 import com.example.sunnyweather.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
@@ -32,7 +33,7 @@ class PlaceFragment:Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (viewModel.isPlaceSaved()){
+        if (viewModel.isPlaceSaved()&&activity is MainActivity){
             val place=viewModel.getSavedPlace()
             val intent= Intent(context,WeatherActivity::class.java).apply {
                 putExtra("location_lng",place.location.lng)
@@ -43,33 +44,33 @@ class PlaceFragment:Fragment() {
             activity?.finish()
             return
         }
-//        val layoutManager=LinearLayoutManager(activity)
-//        recyclerView.layoutManager=layoutManager
-//        adapter= PlaceAdapter(this,viewModel.placeList)
-//        recyclerView.adapter=adapter
-//        searchPlaceEdit.addTextChangedListener{ editable->
-//            val content=editable.toString()
-//            if (content.isNotEmpty()){
-//                viewModel.searchPlaces(content)
-//            }else{
-//                recyclerView.visibility=View.GONE
-//                bgImageView.visibility=View.VISIBLE
-//                viewModel.placeList.clear()
-//                adapter.notifyDataSetChanged()
-//            }
-//        }
-//        viewModel.placeLiveData.observe(this, Observer { result ->
-//            val places = result.getOrNull()
-//            if (places != null) {
-//                recyclerView.visibility = View.VISIBLE
-//                bgImageView.visibility = View.GONE
-//                viewModel.placeList.clear()
-//                viewModel.placeList.addAll(places)
-//                adapter.notifyDataSetChanged()
-//            } else {
-//                Toast.makeText(activity, "未能查询到任何地点", Toast.LENGTH_SHORT).show()
-//                result.exceptionOrNull()?.printStackTrace()
-//            }
-//        })
+        val layoutManager=LinearLayoutManager(activity)
+        recyclerView.layoutManager=layoutManager
+        adapter= PlaceAdapter(this,viewModel.placeList)
+        recyclerView.adapter=adapter
+        searchPlaceEdit.addTextChangedListener{ editable->
+            val content=editable.toString()
+            if (content.isNotEmpty()){
+                viewModel.searchPlaces(content)
+            }else{
+                recyclerView.visibility=View.GONE
+                bgImageView.visibility=View.VISIBLE
+                viewModel.placeList.clear()
+                adapter.notifyDataSetChanged()
+            }
+        }
+        viewModel.placeLiveData.observe(this, Observer { result ->
+            val places = result.getOrNull()
+            if (places != null) {
+                recyclerView.visibility = View.VISIBLE
+                bgImageView.visibility = View.GONE
+                viewModel.placeList.clear()
+                viewModel.placeList.addAll(places)
+                adapter.notifyDataSetChanged()
+            } else {
+                Toast.makeText(activity, "未能查询到任何地点", Toast.LENGTH_SHORT).show()
+                result.exceptionOrNull()?.printStackTrace()
+            }
+        })
     }
 }
